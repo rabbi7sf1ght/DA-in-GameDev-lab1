@@ -1,5 +1,5 @@
 # АНАЛИЗ ДАННЫХ И ИСКУССТВЕННЫЙ ИНТЕЛЛЕКТ [in GameDev]
-Отчет по лабораторной работе #1 выполнил(а):
+Отчет по лабораторной работе #3 выполнил(а):
 - Нагнибеда Алиса Александровна
 - РИ-210941
 Отметка о выполнении заданий (заполняется студентом):
@@ -8,7 +8,7 @@
 | ------ | ------ | ------ |
 | Задание 1 | * | 60 |
 | Задание 2 | * | 20 |
-| Задание 3 | * (+-) | 20 |
+| Задание 3 | * | 20 |
 
 знак "*" - задание выполнено; знак "#" - задание не выполнено;
 
@@ -35,268 +35,210 @@
 - ✨Magic ✨
 
 ## Цель работы
-Ознакомиться с основными операторами зыка Python на примере реализации линейной регрессии.
+Познакомиться с программными средствами для создания системы машинного обучения и ее интеграции в Unity.
 
 ## Задание 1
-### Реализовать совместную работу и передачу данных в связке Python - Google-Sheets – Unity. При выполнении задания используйте видео-материалы и исходные данные, предоставленные преподавателя курса.
+### Реализовать систему машинного обучения в связке Python - Google-Sheets – Unity. При выполнении задания были использованы видео-материалы и исходные данные, предоставленные преподавателями курса.
 
-#### 1. В облачном сервисе google console подключить API для работы с google sheets и google drive.
+1. Создайн новый пустой 3D проект на Unity:
 
-В Google Cloud Console создан проект, к которому подключены необходимые API:
-
-![Скриншот 11-10-2022 141119](https://user-images.githubusercontent.com/113305087/195166605-dea24294-d8ee-4894-b651-b5528d04227b.jpg)
-
-#### 2. Реализовать запись данных из скрипта на python в google-таблицу. Данные описывают изменение темпа инфляции на протяжении 11 отсчётных периодов, с учётом стоимости игрового объекта в каждый период.
-
-- В Google Cloud Console получен email, который поможет обеспечить связь Google-таблиц с программой:
-
-![Скриншот 10-10-2022 144336](https://user-images.githubusercontent.com/113305087/195166871-b41020d9-97d8-40fd-bd3d-0bc30555d2e7.jpg)
-
-- Полученный email подключен в качестве редактора к созданной в Google-таблицах таблице:
-
-![Скриншот 10-10-2022 144330](https://user-images.githubusercontent.com/113305087/195167333-766f167f-05c2-4934-bc8d-e81bb2a3e237.jpg)
-
-- Создан новый проект в PyCharm, к которому подключены необходимые для выполнения задания библиотеки:
-
-![Скриншот 10-10-2022 144718](https://user-images.githubusercontent.com/113305087/195167513-e98ed28c-7333-4aa1-af14-80578a27a405.jpg)
-
-- К проекту также подключен ключ, полученный из Google Consol, именно при помощи него будет связан код и таблица:
-- 
-- ![Скриншот 11-10-2022 151124](https://user-images.githubusercontent.com/113305087/195168042-28f0a5ee-9f46-454e-b0d2-0f6217e2c5b7.jpg)
-
-- В файл записан код, предоставленный преподавателем - он выполняет необходимые вычисления и записывает данные в подключенную в первых строках таблицу:
-
-![Скриншот 10-10-2022 144724](https://user-images.githubusercontent.com/113305087/195167620-f1df8b04-25a6-44e1-97c9-b3a62a5e06f5.jpg)
-![Скриншот 10-10-2022 151051](https://user-images.githubusercontent.com/113305087/195168254-0060e611-ee63-41b8-b50f-c9efde1118c9.jpg)
-![Скриншот 10-10-2022 151101](https://user-images.githubusercontent.com/113305087/195168281-3a624b51-d07a-44d8-a4ec-33729b0d6918.jpg)
+![Скриншот 27-10-2022 155425](https://user-images.githubusercontent.com/113305087/200482474-76512c67-d36e-432e-8c2a-6e73ed0565e8.jpg)
 
 
-#### 3. Создать новый проект на Unity, который будет получать данные из google-таблицы, в которую были записаны данные в предыдущем пункте.
+2. В созданный проект добавлен ML Agent, предоставленный преподавателями. Добавлены следующие .json – файлы:
+o ml-agents-release_19 / com,unity.ml-agents / package.json
+o ml-agents-release_19 / com,unity.ml-agents.extensions / package.json
 
-- В Unity создан проект:
-![Скриншот 10-10-2022 152125](https://user-images.githubusercontent.com/113305087/195168475-3d598ff7-6783-4805-ac1c-c7bdfd6682a5.jpg)
+![Скриншот 27-10-2022 161931](https://user-images.githubusercontent.com/113305087/200483096-b83402ab-d901-4299-9043-afb9fe1537db.jpg)
 
-- В Google Cloud создан ключ, при помощи которого будет организована связь Unity с Google-таблицей:
+Теперь во вкладке Components можно увидеть ML Agent:
 
-![Скриншот 10-10-2022 151458](https://user-images.githubusercontent.com/113305087/195169058-cc57dbc6-5b5e-4066-ac3d-1b0d1d38e6af.jpg)
-![Скриншот 10-10-2022 151632](https://user-images.githubusercontent.com/113305087/195169086-20754fd1-00b2-45f8-8fd2-1a8088d94ff8.jpg)
-
-- В Google-таблице изменены настройки приватности:
-
-![Скриншот 10-10-2022 151728](https://user-images.githubusercontent.com/113305087/195169178-bf709ae6-a34c-4f20-90ed-0c663fdffced.jpg)
-
-- К проекту Unity подключены файлы, предоставленные преподавателями:
-
-![Скриншот 10-10-2022 183352](https://user-images.githubusercontent.com/113305087/195169542-e75d43bc-b87b-4303-aab1-37f27d6ed4e4.jpg)
+![Скриншот 27-10-2022 162114](https://user-images.githubusercontent.com/113305087/200483164-db6d9627-49a1-4376-9772-09bfa392f30b.jpg)
 
 
-#### 4. Написать функционал на Unity, в котором будет воспризводиться аудио-файл в зависимости от значения данных из таблицы.
+3. Запускаем Anaconda Prompt, при помощи которого мы будем запускать команды. 
+Подключаем библиотеку mlagents 0.28.0:
 
-- В созданном ранее проекте в Unity мы создаем новый скрипт, в котором будет написан функционал воспроизведения айдио-файла:
+![Скриншот 27-10-2022 171728](https://user-images.githubusercontent.com/113305087/200483597-11f1bd0a-ac1f-4b0c-9929-07ab9dc2f4de.jpg)
+![Скриншот 27-10-2022 171916](https://user-images.githubusercontent.com/113305087/200483643-c003d149-d295-416b-b2cb-aaf4ffde40d0.jpg)
+![Скриншот 27-10-2022 172244](https://user-images.githubusercontent.com/113305087/200483662-ae8c4513-f5c4-463b-b784-e4f0460ca824.jpg)
 
-![Скриншот 10-10-2022 183341](https://user-images.githubusercontent.com/113305087/195169379-ad955fd6-071f-40ea-8153-9d83bb783052.jpg)
+Также подключаем библиотеку torch 1.7.1 (на скриншоте - результат подключения):
 
-- В файле, открытом в VS-code записан код, представленный преподавателем:
+![Скриншот 27-10-2022 174704](https://user-images.githubusercontent.com/113305087/200484136-9a3dd977-4be6-42c7-bb4e-082b9f2d6d74.jpg)
 
-![Скриншот 11-10-2022 155331](https://user-images.githubusercontent.com/113305087/195169875-fbace40d-8894-4b37-b9cd-7a901b9502e7.jpg)
+Директорию работы консоли меняем на директорию проекта Unity:
 
-- При выполнении кода, Unity получает и выводит данные из подключенной к файлу таблицы, воспроивзодя при этом звуки, зависимо от значения инфляции:
-
-![Скриншот 11-10-2022 005101](https://user-images.githubusercontent.com/113305087/195170001-3d2867bf-6c19-4ed7-a08a-f4d8dd8abec9.jpg)
-
-- Изменив изначальные данные (посредством запуска кода на Python), мы можем заново воспроизвести решение этой задачи:
-
-![Скриншот 11-10-2022 005246](https://user-images.githubusercontent.com/113305087/195170453-a3e1c96f-f41e-42e5-98e0-0a1970beba4c.jpg)
-![Скриншот 11-10-2022 005258](https://user-images.githubusercontent.com/113305087/195170487-568c63c2-f6b7-4059-80ab-e6e4392f47ce.jpg)
-![Скриншот 11-10-2022 005241](https://user-images.githubusercontent.com/113305087/195170513-15fb2f06-abc0-4485-8966-c55a396080af.jpg)
-
-В результате мы получили программы в Python и Unity, связанные с Google-Sheets
+![Скриншот 27-10-2022 174913](https://user-images.githubusercontent.com/113305087/200484327-189af2b2-7005-4554-86a2-4fa7f7d07fa5.jpg)
 
 
-## Задание 2
-### Реализовать запись в Google-таблицу набора данных, полученных с помощью линейной регрессии из лабораторной работы № 1
+4. На сцене созданы соответствующие заданным преподавателем характеристикам плоскость, куб и сфера:
 
-Для реализации этого задания был создан новый лист (List2) в той же таблице, с которой я работала ранее, а также был создан новый файл кода в том же проекте, что и ранее, поэтому реализовывать заново подключение между таблицей и проектом не нужно было.
-
-- Код, используемый для задачи с линейной регрессией, был переписан в PyCharm с некоторыми изменениями, заменяющими пойстройку графиков и вывод данных в консоль на передачу их в таблицу:
-
-```
-import gspread
-import numpy as np
-gc = gspread.service_account(filename='unitydatascience-365106-1485a8c29bf8.json')
-sh = gc.open("UnitySheets").worksheet("List2")
-
-x = [3, 21, 22, 34, 54, 34, 55, 67, 89, 99]
-x = np.array(x)
-y = [2, 22, 24, 65, 79, 82, 55, 130, 150, 199]
-y = np.array(y)
+![Скриншот 27-10-2022 175612](https://user-images.githubusercontent.com/113305087/200484696-bf338e1e-cc8e-42de-80b8-aaacdb89c057.jpg)
+![Скриншот 27-10-2022 180112](https://user-images.githubusercontent.com/113305087/200484747-5d65cdca-638d-4da8-afb9-40fc25f0fb69.jpg)
 
 
-def model(a, b, x):
-  return a*x + b
+5. К сфере подключен C# скрипт-файл:
+
+![Скриншот 27-10-2022 180216](https://user-images.githubusercontent.com/113305087/200484926-0eb069ba-d58b-4d35-8fc0-75abc158396f.jpg)
+![Скриншот 27-10-2022 180239](https://user-images.githubusercontent.com/113305087/200484941-7ee278d2-12e0-4e68-90da-8ef2f08eea73.jpg)
 
 
-def loss_function(a, b, x, y):
-  num = len(x)
-  prediction = model(a,b,x)
-  return (0.5 / num) * (np.square(prediction - y)).sum()
-
-
-def optimize(a, b, x, y):
-  num = len(x)
-  prediction = model(a, b, x)
-  da = (1.0 / num) * ((prediction - y) * x).sum()
-  db = (1.0 / num) * ((prediction - y).sum())
-  a = a - Lr*da
-  b = b - Lr*db
-  return a, b
-
-
-def iterate(a, b, x, y, times):
-  for i in range(times):
-    a,b = optimize(a, b, x, y)
-  return a, b
-
-
-a = np.random.rand(1)
-print(a)
-b = np.random.rand(1)
-print(b)
-Lr = 0.000001
-amount = 10
-
-iteration = 1
-for i in range(1, amount + 1):
-    a, b = iterate(a, b, x, y, iteration)
-    prediction = model(a, b, x)
-    loss = loss_function(a, b, x, y)
-    sh.update(('A' + str(i)), str(i))
-    sh.update(('B' + str(i)), str(iteration))
-    sh.update(('C' + str(i)), str(a))
-    sh.update(('D' + str(i)), str(b))
-    sh.update(('E' + str(i)), str(loss))
-    iteration += 30
-```
-
-Результат выполнения программы:
-
-![image](https://user-images.githubusercontent.com/113305087/195172516-7c2fec9f-1b29-4242-a352-4efe0681c79e.png)
-
-Также представляю вариант выполнения программы, в которой были указаны названия столбцов, для лучшего понимания того, какие данные были выведены:
-
-![Скриншот 11-10-2022 194342](https://user-images.githubusercontent.com/113305087/195175702-def28777-75a5-4586-8885-4e3d483bd3ac.jpg)
-
-Такой вариант таблицы был откинут из-за появивишихся позже сложностей с третьим заданием.
-
-
-## Задание 3
-### Самостоятельно разработать сценарий воспроизведения звукового сопровождения в Unity в зависимости от изменения считанных данных в задании 2
-
-Для выполнения этого задания был создан новый скрипт в том же проекте Unity, что и ранее:
-
-![Скриншот 11-10-2022 191058](https://user-images.githubusercontent.com/113305087/195173410-2dd299b9-9692-40f2-8d2c-f01792ea94f9.jpg)
-
-В этом скрипте был написан следующий код по аналогии с предыдущим заданием:
+6. В скрипт-файл был записан следующий, предоставленный преподавателем код:
 
 ```
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
-using SimpleJSON;
+using Unity.MLAgents;
+using Unity.MLAgents.Sensors;
+using Unity.MLAgents.Actuators;
 
-public class NumberToSound : MonoBehaviour
+public class RollerAgent : Agent
 {
-    public AudioClip goodSpeak;
-    public AudioClip normalSpeak;
-    public AudioClip badSpeak;
-    private AudioSource selectAudio;
-    private Dictionary<string, float> dataSet = new Dictionary<string, float>();
-    private bool statusStart = false;
-    private int i = 1;
-
+    Rigidbody rBody;
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(GoogleSheets());
+        rBody = GetComponent<Rigidbody>();
     }
 
-    // Update is called once per frame
-    void Update()
+    public Transform Target;
+    public override void OnEpisodeBegin()
     {
-        if (statusStart == false & dataSet["Mon_" + i.ToString()] <= 250 & i != dataSet.Count)
+        if (this.transform.localPosition.y < 0)
         {
-            StartCoroutine(PlaySelectAudioGood());
-            Debug.Log(dataSet["Mon_" + i.ToString()]);
+            this.rBody.angularVelocity = Vector3.zero;
+            this.rBody.velocity = Vector3.zero;
+            this.transform.localPosition = new Vector3(0, 0.5f, 0);
         }
 
-        if (statusStart == false & dataSet["Mon_" + i.ToString()] > 250 & dataSet["Mon_" + i.ToString()] < 1000 & i != dataSet.Count)
-        {
-            StartCoroutine(PlaySelectAudioNormal());
-            Debug.Log(dataSet["Mon_" + i.ToString()]);
-        }
+        Target.localPosition = new Vector3(Random.value * 8-4, 0.5f, Random.value * 8-4);
+    }
+    public override void CollectObservations(VectorSensor sensor)
+    {
+        sensor.AddObservation(Target.localPosition);
+        sensor.AddObservation(this.transform.localPosition);
+        sensor.AddObservation(rBody.velocity.x);
+        sensor.AddObservation(rBody.velocity.z);
+    }
+    public float forceMultiplier = 10;
+    public override void OnActionReceived(ActionBuffers actionBuffers)
+    {
+        Vector3 controlSignal = Vector3.zero;
+        controlSignal.x = actionBuffers.ContinuousActions[0];
+        controlSignal.z = actionBuffers.ContinuousActions[1];
+        rBody.AddForce(controlSignal * forceMultiplier);
 
-        if (statusStart == false & dataSet["Mon_" + i.ToString()] >= 1000 & i != dataSet.Count)
-        {
-            StartCoroutine(PlaySelectAudioBad());
-            Debug.Log(dataSet["Mon_" + i.ToString()]);
-        }
-    }
+        float distanceToTarget = Vector3.Distance(this.transform.localPosition, Target.localPosition);
 
-    IEnumerator GoogleSheets()
-    {
-        UnityWebRequest currentResp = UnityWebRequest.Get("https://sheets.googleapis.com/v4/spreadsheets/1srUGeMCRPp9wLdIYumhggFNHAjAHXDanZaQsXTQz6mo/values/List2?key=AIzaSyAvwI4j2DsXTJ1XTYokbD7CxPsFhlPq8Lg");
-        yield return currentResp.SendWebRequest();
-        string rawResp = currentResp.downloadHandler.text;
-        var rawJson = JSON.Parse(rawResp);
-        foreach (var itemRawJson in rawJson["values"])
+        if(distanceToTarget < 1.42f)
         {
-            var parseJson = JSON.Parse(itemRawJson.ToString());
-            var selectRow = parseJson[0].AsStringList;
-            dataSet.Add(("Mon_" + selectRow[0]), float.Parse(selectRow[4]));
+            SetReward(1.0f);
+            EndEpisode();
         }
-    }
-
-    IEnumerator PlaySelectAudioGood()
-    {
-        statusStart = true;
-        selectAudio = GetComponent<AudioSource>();
-        selectAudio.clip = goodSpeak;
-        selectAudio.Play();
-        yield return new WaitForSeconds(3);
-        statusStart = false;
-        i++;
-    }
-    IEnumerator PlaySelectAudioNormal()
-    {
-        statusStart = true;
-        selectAudio = GetComponent<AudioSource>();
-        selectAudio.clip = normalSpeak;
-        selectAudio.Play();
-        yield return new WaitForSeconds(3);
-        statusStart = false;
-        i++;
-    }
-    IEnumerator PlaySelectAudioBad()
-    {
-        statusStart = true;
-        selectAudio = GetComponent<AudioSource>();
-        selectAudio.clip = badSpeak;
-        selectAudio.Play();
-        yield return new WaitForSeconds(4);
-        statusStart = false;
-        i++;
+        else if (this.transform.localPosition.y < 0)
+        {
+            EndEpisode();
+        }
     }
 }
 ```
 
-Планировалось получать данные по потерям в результате выполнения алгоритма линейной регрессии и выводить их в консоль, также вызывая звуковое сопровождение, однако при выполнении данного кода выводится ошибка, которую мне так и не удалось исправить, несмотря на применение различных способов решения этой проблемы (попытка учесть шапку таблицы, о которой я говорила в прошлом пункте, её удаление, создание полностью новой Google-таблицы и др.):
+Он же был подключен к сфере:
 
-![Скриншот 11-10-2022 214640](https://user-images.githubusercontent.com/113305087/195174244-1ed6314e-9d76-4707-8e1a-9cd3d300c7f1.jpg)
+![Скриншот 27-10-2022 181639](https://user-images.githubusercontent.com/113305087/200485475-4b06eb0a-b2e7-4be1-81f0-24e53167472a.jpg)
+
+
+7. Объекту «сфера» добавлены настроенные по образцу компоненты Rigidbody, Decision Requester, Behavior Parameters:
+
+![image](https://user-images.githubusercontent.com/113305087/200486109-bb7b08e9-3d21-4f23-ae08-1b45212c50f4.png)
+![Скриншот 27-10-2022 181839](https://user-images.githubusercontent.com/113305087/200485535-6c2fee5c-6ddd-4950-be03-723d394e4d0b.jpg)
+
+
+8. В корень проекта добавлен файл конфигурации нейронной сети, полученный из папки с файлами проекта:
+
+![Скриншот 27-10-2022 182036](https://user-images.githubusercontent.com/113305087/200486316-0345b3cb-2834-40c5-97b0-6e5bd6d77414.jpg)
+
+Содержание файла с кодом:
+```
+behaviors:
+  RollerBall:
+    trainer_type: ppo
+    hyperparameters:
+      batch_size: 10
+      buffer_size: 100
+      learning_rate: 3.0e-4
+      beta: 5.0e-4
+      epsilon: 0.2
+      lambd: 0.99
+      num_epoch: 3
+      learning_rate_schedule: linear
+    network_settings:
+      normalize: false
+      hidden_units: 128
+      num_layers: 2
+    reward_signals:
+      extrinsic:
+        gamma: 0.99
+        strength: 1.0
+    max_steps: 500000
+    time_horizon: 64
+    summary_freq: 10000
+```
+
+
+9. Запущена работа ml-агента:
+
+![Скриншот 27-10-2022 210254](https://user-images.githubusercontent.com/113305087/200486480-163dc5d5-7d81-4cbe-8975-bbf9a8272104.jpg)
+![Скриншот 27-10-2022 211544](https://user-images.githubusercontent.com/113305087/200486698-0d8c1381-06d3-4f9d-92ca-ed94a6570f99.jpg)
+
+
+10. Запущена сцена, происходит работа ML-Agent. Сфера учится находить куб:
+
+![Скриншот 27-10-2022 213724](https://user-images.githubusercontent.com/113305087/200486735-e2508be7-a564-443f-9244-0f7873cc9766.jpg)
+![Скриншот 27-10-2022 213735](https://user-images.githubusercontent.com/113305087/200486769-5f85aa97-0654-4407-9fad-6b72b9a7f8e3.jpg)
+
+
+11. Сделаны 3, 9, 27 копий модели «Плоскость-Сфера-Куб», снова запущена симуляция сцены. Заметно, что обучение сферы происходит всё быстрее и быстрее:
+
+![Скриншот 06-11-2022 203655](https://user-images.githubusercontent.com/113305087/200487004-79307d49-a764-40dc-a927-d772952e2b1f.jpg)
+![Скриншот 06-11-2022 210237](https://user-images.githubusercontent.com/113305087/200487028-a162e785-271b-4970-8873-a4290a04ffdc.jpg)
+
+
+![Скриншот 06-11-2022 204812](https://user-images.githubusercontent.com/113305087/200487066-d49cb394-de8b-4d33-af98-01d47abca6bc.jpg)
+![Скриншот 06-11-2022 210250](https://user-images.githubusercontent.com/113305087/200487097-6eb4013c-8ad1-4b95-a82d-1bcae3753298.jpg)
+
+
+![Скриншот 06-11-2022 205555](https://user-images.githubusercontent.com/113305087/200487117-a3075e1b-ca1a-4860-9aad-9daa8811485e.jpg)
+![Скриншот 06-11-2022 210300](https://user-images.githubusercontent.com/113305087/200487144-7eb157f5-78d5-4ed5-8fe4-9b85f702f36c.jpg)
+
+
+12. Работу модели можно проверить при помощи файла, результирующего работу ML-Agent, 'RollerBall.onnx', который мы согласно советам преподавтаеля подключаем к сфере:
+
+![Скриншот 06-11-2022 210838](https://user-images.githubusercontent.com/113305087/200487342-56465987-cd22-4c62-821e-f381dbf3a1ae.jpg)
+![Скриншот 06-11-2022 210954](https://user-images.githubusercontent.com/113305087/200487459-f9c92c52-f85a-46cb-8fe7-357d7f205ff0.jpg)
+
+
+13. Сфера движется, теперь она может относительно хорошо находить куб:
+
+![Скриншот 06-11-2022 211618](https://user-images.githubusercontent.com/113305087/200487669-0ef68c39-3fa6-4390-80b2-ad7e970b3243.jpg)
+
+
+#### Выводы, касательно работы ML-Agent и обучения сферы:
+
+Работа ML-Agent заключается в том, чтобы обучить объект какому-либо действию. Проследив за работой ML-Agent в задании данной лабораторной работы, можно сделать вывод, что объект действительно успешно обучается - в результате нго работы мы получили сферу, которая может успешно находить и догонять куб на плоскости. Также можно отметить, что чем больше одинаковых объектов проходит обучение одновременно, тем быстрее оно происходит.
+
+## Задание 2
+### Подробно опишите каждую строку файла конфигурации нейронной сети, доступного в папке с файлами проекта по ссылке. Самостоятельно найдите информацию о компонентах Decision Requester, Behavior Parameters, добавленных к сфере.
+
+
+## Задание 3
+### Доработайте сцену и обучите ML-Agent таким образом, чтобы шар перемещался между двумя кубами разного цвета. Кубы должны, как и в первом задании, случайно изменять координаты на плоскости.
 
 ## Выводы
 
-Во время выполнения лабораторной работы, я смогла реализовать совместную работу и передачу данных в связке Python - Google-Sheets – Unity и поподробнее рассмотреть её на примере задачи с оценкой изменений темпов инфляции. Также на примере задачи о линейной регрессии я смогла реализовать связь Python - Google-Sheets, что помогло мне лучше разобраться в этой теме. Однако к сожалению, работая над связью Google-Sheets – Unity я столкнулась с трудностями, которые не смогла преодолеть.
+В выводах к работе дайте развернутый ответ, что такое игровой баланс и как системы машинного обучения могут быть использованы для того, чтобы его скорректировать.
 
 
 | Plugin | README |
