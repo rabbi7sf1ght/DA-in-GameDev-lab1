@@ -60,7 +60,9 @@ o ml-agents-release_19 / com,unity.ml-agents.extensions / package.json
 Подключаем библиотеку mlagents 0.28.0:
 
 ![Скриншот 27-10-2022 171728](https://user-images.githubusercontent.com/113305087/200483597-11f1bd0a-ac1f-4b0c-9929-07ab9dc2f4de.jpg)
+
 ![Скриншот 27-10-2022 171916](https://user-images.githubusercontent.com/113305087/200483643-c003d149-d295-416b-b2cb-aaf4ffde40d0.jpg)
+
 ![Скриншот 27-10-2022 172244](https://user-images.githubusercontent.com/113305087/200483662-ae8c4513-f5c4-463b-b784-e4f0460ca824.jpg)
 
 Также подключаем библиотеку torch 1.7.1 (на скриншоте - результат подключения):
@@ -75,71 +77,73 @@ o ml-agents-release_19 / com,unity.ml-agents.extensions / package.json
 4. На сцене созданы соответствующие заданным преподавателем характеристикам плоскость, куб и сфера:
 
 ![Скриншот 27-10-2022 175612](https://user-images.githubusercontent.com/113305087/200484696-bf338e1e-cc8e-42de-80b8-aaacdb89c057.jpg)
+
 ![Скриншот 27-10-2022 180112](https://user-images.githubusercontent.com/113305087/200484747-5d65cdca-638d-4da8-afb9-40fc25f0fb69.jpg)
 
 
 5. К сфере подключен C# скрипт-файл:
 
 ![Скриншот 27-10-2022 180216](https://user-images.githubusercontent.com/113305087/200484926-0eb069ba-d58b-4d35-8fc0-75abc158396f.jpg)
+
 ![Скриншот 27-10-2022 180239](https://user-images.githubusercontent.com/113305087/200484941-7ee278d2-12e0-4e68-90da-8ef2f08eea73.jpg)
 
 
-6. В скрипт-файл был записан следующий, предоставленный преподавателем код:
+6. В скрипт-файл был записан предоставленный преподавателем код:
 
 ```
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Unity.MLAgents;
-using Unity.MLAgents.Sensors;
-using Unity.MLAgents.Actuators;
+using System.Collections; // добавляем библиотеку System.Collections к файлу
+using System.Collections.Generic; // добавляем библиотеку System.Collections.Generic к файлу
+using UnityEngine; // добавляем библиотеку UnityEngine к файлу
+using Unity.MLAgents; // добавляем библиотеку Unity.MLAgents к файлу
+using Unity.MLAgents.Sensors; // добавляем библиотеку Unity.MLAgents.Sensors к файлу (сбор информации)
+using Unity.MLAgents.Actuators; // добавляем библиотеку Unity.MLAgents.Actuators к файлу (повторение данных)
 
-public class RollerAgent : Agent
+public class RollerAgent : Agent //создаём публичный класс RollerAgent, который наследует функционал класса Agent 
 {
-    Rigidbody rBody;
+    Rigidbody rBody; //создаём переменную rBody типа Rigidbody - отвечает за сферу
     // Start is called before the first frame update
-    void Start()
+    void Start() //стандартный метод для скрипта Unity, первый запуск проекта
     {
-        rBody = GetComponent<Rigidbody>();
+        rBody = GetComponent<Rigidbody>(); //считываем Rigigbody в переменную rBody
     }
 
-    public Transform Target;
-    public override void OnEpisodeBegin()
+    public Transform Target; //создаём публичную переменную Target типа Transform - координаты куба
+    public override void OnEpisodeBegin() //переопределям метод OnEpisodeBegin - действие в ситуации, когда MLAgent завершил свои действия (начало обучения снова)
     {
-        if (this.transform.localPosition.y < 0)
+        if (this.transform.localPosition.y < 0) //если изначальная позиция сферы, по у меньше 0, то совершится следующее действие
         {
-            this.rBody.angularVelocity = Vector3.zero;
-            this.rBody.velocity = Vector3.zero;
-            this.transform.localPosition = new Vector3(0, 0.5f, 0);
+            this.rBody.angularVelocity = Vector3.zero; //угловая скорость сферы = нулевому вектору(x, y, z)
+            this.rBody.velocity = Vector3.zero; //скорость сферы = нулевому вектору(x, y, z)
+            this.transform.localPosition = new Vector3(0, 0.5f, 0); //изменение изначальной позиции сферы
         }
 
-        Target.localPosition = new Vector3(Random.value * 8-4, 0.5f, Random.value * 8-4);
+        Target.localPosition = new Vector3(Random.value * 8-4, 0.5f, Random.value * 8-4); //рандомное изменение локальной позиции куба по x и z
     }
-    public override void CollectObservations(VectorSensor sensor)
+    public override void CollectObservations(VectorSensor sensor) //переопределяем метод CollectObservations, собирающий параметры во время обучения
     {
-        sensor.AddObservation(Target.localPosition);
-        sensor.AddObservation(this.transform.localPosition);
-        sensor.AddObservation(rBody.velocity.x);
-        sensor.AddObservation(rBody.velocity.z);
+        sensor.AddObservation(Target.localPosition); //добавляем к сборам локальную позицию куба
+        sensor.AddObservation(this.transform.localPosition); //добавляем к сборам локальную позицию сферы
+        sensor.AddObservation(rBody.velocity.x); //добавляем к сборам скорость сферы по x
+        sensor.AddObservation(rBody.velocity.z); //добавляем к сборам скорость сферы по z
     }
-    public float forceMultiplier = 10;
-    public override void OnActionReceived(ActionBuffers actionBuffers)
+    public float forceMultiplier = 10; //создаем публичную переменную - изменение силы объекта
+    public override void OnActionReceived(ActionBuffers actionBuffers) //переопределяем метод OnActionRecieved - основная функция обучения, принимающая действия
     {
-        Vector3 controlSignal = Vector3.zero;
-        controlSignal.x = actionBuffers.ContinuousActions[0];
-        controlSignal.z = actionBuffers.ContinuousActions[1];
-        rBody.AddForce(controlSignal * forceMultiplier);
+        Vector3 controlSignal = Vector3.zero; //создаём вектор(x, y, z) controlSignal, равный нулевому вектору
+        controlSignal.x = actionBuffers.ContinuousActions[0]; // присваеваем вектору по x переданное непрерывное действие с нулевым коэффициентом
+        controlSignal.z = actionBuffers.ContinuousActions[1]; // присваеваем вектору по z переданное непрерывное действие с первым коэффициентом
+        rBody.AddForce(controlSignal * forceMultiplier); // меняем силу сферы, увеличиваем её
 
-        float distanceToTarget = Vector3.Distance(this.transform.localPosition, Target.localPosition);
+        float distanceToTarget = Vector3.Distance(this.transform.localPosition, Target.localPosition); //создаём переменную, узнающую расстояние от сферы до куба
 
-        if(distanceToTarget < 1.42f)
+        if(distanceToTarget < 1.42f) //если расстояние меньше определённого результата, то
         {
-            SetReward(1.0f);
-            EndEpisode();
+            SetReward(1.0f); //отмечаются успешные результаты
+            EndEpisode(); //конец действия
         }
-        else if (this.transform.localPosition.y < 0)
+        else if (this.transform.localPosition.y < 0) // если позиция сферы по y меньше нуля
         {
-            EndEpisode();
+            EndEpisode(); //конец действия
         }
     }
 }
@@ -153,6 +157,7 @@ public class RollerAgent : Agent
 7. Объекту «сфера» добавлены настроенные по образцу компоненты Rigidbody, Decision Requester, Behavior Parameters:
 
 ![image](https://user-images.githubusercontent.com/113305087/200486109-bb7b08e9-3d21-4f23-ae08-1b45212c50f4.png)
+
 ![Скриншот 27-10-2022 181839](https://user-images.githubusercontent.com/113305087/200485535-6c2fee5c-6ddd-4950-be03-723d394e4d0b.jpg)
 
 
@@ -191,32 +196,38 @@ behaviors:
 9. Запущена работа ml-агента:
 
 ![Скриншот 27-10-2022 210254](https://user-images.githubusercontent.com/113305087/200486480-163dc5d5-7d81-4cbe-8975-bbf9a8272104.jpg)
+
 ![Скриншот 27-10-2022 211544](https://user-images.githubusercontent.com/113305087/200486698-0d8c1381-06d3-4f9d-92ca-ed94a6570f99.jpg)
 
 
 10. Запущена сцена, происходит работа ML-Agent. Сфера учится находить куб:
 
 ![Скриншот 27-10-2022 213724](https://user-images.githubusercontent.com/113305087/200486735-e2508be7-a564-443f-9244-0f7873cc9766.jpg)
+
 ![Скриншот 27-10-2022 213735](https://user-images.githubusercontent.com/113305087/200486769-5f85aa97-0654-4407-9fad-6b72b9a7f8e3.jpg)
 
 
 11. Сделаны 3, 9, 27 копий модели «Плоскость-Сфера-Куб», снова запущена симуляция сцены. Заметно, что обучение сферы происходит всё быстрее и быстрее:
 
 ![Скриншот 06-11-2022 203655](https://user-images.githubusercontent.com/113305087/200487004-79307d49-a764-40dc-a927-d772952e2b1f.jpg)
+
 ![Скриншот 06-11-2022 210237](https://user-images.githubusercontent.com/113305087/200487028-a162e785-271b-4970-8873-a4290a04ffdc.jpg)
 
 
 ![Скриншот 06-11-2022 204812](https://user-images.githubusercontent.com/113305087/200487066-d49cb394-de8b-4d33-af98-01d47abca6bc.jpg)
+
 ![Скриншот 06-11-2022 210250](https://user-images.githubusercontent.com/113305087/200487097-6eb4013c-8ad1-4b95-a82d-1bcae3753298.jpg)
 
 
 ![Скриншот 06-11-2022 205555](https://user-images.githubusercontent.com/113305087/200487117-a3075e1b-ca1a-4860-9aad-9daa8811485e.jpg)
+
 ![Скриншот 06-11-2022 210300](https://user-images.githubusercontent.com/113305087/200487144-7eb157f5-78d5-4ed5-8fe4-9b85f702f36c.jpg)
 
 
 12. Работу модели можно проверить при помощи файла, результирующего работу ML-Agent, 'RollerBall.onnx', который мы согласно советам преподавтаеля подключаем к сфере:
 
 ![Скриншот 06-11-2022 210838](https://user-images.githubusercontent.com/113305087/200487342-56465987-cd22-4c62-821e-f381dbf3a1ae.jpg)
+
 ![Скриншот 06-11-2022 210954](https://user-images.githubusercontent.com/113305087/200487459-f9c92c52-f85a-46cb-8fe7-357d7f205ff0.jpg)
 
 
@@ -231,6 +242,8 @@ behaviors:
 
 ## Задание 2
 ### Подробно опишите каждую строку файла конфигурации нейронной сети, доступного в папке с файлами проекта по ссылке. Самостоятельно найдите информацию о компонентах Decision Requester, Behavior Parameters, добавленных к сфере.
+
+
 
 
 ## Задание 3
