@@ -38,7 +38,7 @@
 Познакомиться с программными средствами для создания системы машинного обучения и ее интеграции в Unity.
 
 ## Задание 1
-### Реализовать систему машинного обучения в связке Python - Google-Sheets – Unity. При выполнении задания были использованы видео-материалы и исходные данные, предоставленные преподавателями курса.
+### Реализовать систему машинного обучения. При выполнении задания были использованы видео-материалы и исходные данные, предоставленные преподавателями курса.
 
 1. Создайн новый пустой 3D проект на Unity:
 
@@ -46,7 +46,9 @@
 
 
 2. В созданный проект добавлен ML Agent, предоставленный преподавателями. Добавлены следующие .json – файлы:
+
 o ml-agents-release_19 / com,unity.ml-agents / package.json
+
 o ml-agents-release_19 / com,unity.ml-agents.extensions / package.json
 
 ![Скриншот 27-10-2022 161931](https://user-images.githubusercontent.com/113305087/200483096-b83402ab-d901-4299-9043-afb9fe1537db.jpg)
@@ -108,18 +110,23 @@ public class RollerAgent : Agent //создаём публичный класс 
     }
 
     public Transform Target; //создаём публичную переменную Target типа Transform - координаты куба
-    public override void OnEpisodeBegin() //переопределям метод OnEpisodeBegin - действие в ситуации, когда MLAgent завершил свои действия (начало обучения снова)
+    
+    //переопределям метод OnEpisodeBegin - действие в ситуации, когда MLAgent завершил свои действия (начало обучения снова)
+    public override void OnEpisodeBegin() 
     {
-        if (this.transform.localPosition.y < 0) //если изначальная позиция сферы, по у меньше 0, то совершится следующее действие
+        if (this.transform.localPosition.y < 0) //если изначальная позиция сферы, по у меньше 0,
+                                                //то совершится следующее действие
         {
             this.rBody.angularVelocity = Vector3.zero; //угловая скорость сферы = нулевому вектору(x, y, z)
             this.rBody.velocity = Vector3.zero; //скорость сферы = нулевому вектору(x, y, z)
             this.transform.localPosition = new Vector3(0, 0.5f, 0); //изменение изначальной позиции сферы
         }
-
-        Target.localPosition = new Vector3(Random.value * 8-4, 0.5f, Random.value * 8-4); //рандомное изменение локальной позиции куба по x и z
+        //рандомное изменение локальной позиции куба по x и z
+        Target.localPosition = new Vector3(Random.value * 8-4, 0.5f, Random.value * 8-4);
     }
-    public override void CollectObservations(VectorSensor sensor) //переопределяем метод CollectObservations, собирающий параметры во время обучения
+    
+    //переопределяем метод CollectObservations, собирающий параметры во время обучения
+    public override void CollectObservations(VectorSensor sensor) 
     {
         sensor.AddObservation(Target.localPosition); //добавляем к сборам локальную позицию куба
         sensor.AddObservation(this.transform.localPosition); //добавляем к сборам локальную позицию сферы
@@ -127,14 +134,17 @@ public class RollerAgent : Agent //создаём публичный класс 
         sensor.AddObservation(rBody.velocity.z); //добавляем к сборам скорость сферы по z
     }
     public float forceMultiplier = 10; //создаем публичную переменную - изменение силы объекта
-    public override void OnActionReceived(ActionBuffers actionBuffers) //переопределяем метод OnActionRecieved - основная функция обучения, принимающая действия
+    //переопределяем метод OnActionRecieved - основная функция обучения, принимающая действия
+    public override void OnActionReceived(ActionBuffers actionBuffers) 
     {
         Vector3 controlSignal = Vector3.zero; //создаём вектор(x, y, z) controlSignal, равный нулевому вектору
-        controlSignal.x = actionBuffers.ContinuousActions[0]; // присваеваем вектору по x переданное непрерывное действие с нулевым коэффициентом
-        controlSignal.z = actionBuffers.ContinuousActions[1]; // присваеваем вектору по z переданное непрерывное действие с первым коэффициентом
+        // присваеваем вектору по x переданное непрерывное действие с нулевым коэффициентом
+        controlSignal.x = actionBuffers.ContinuousActions[0]; 
+        // присваеваем вектору по z переданное непрерывное действие с первым коэффициентом
+        controlSignal.z = actionBuffers.ContinuousActions[1];
         rBody.AddForce(controlSignal * forceMultiplier); // меняем силу сферы, увеличиваем её
-
-        float distanceToTarget = Vector3.Distance(this.transform.localPosition, Target.localPosition); //создаём переменную, узнающую расстояние от сферы до куба
+        //создаём переменную, узнающую расстояние от сферы до куба
+        float distanceToTarget = Vector3.Distance(this.transform.localPosition, Target.localPosition); 
 
         if(distanceToTarget < 1.42f) //если расстояние меньше определённого результата, то
         {
@@ -176,8 +186,6 @@ public class RollerAgent : Agent //создаём публичный класс 
 
 
 10. Запущена сцена, происходит работа ML-Agent. Сфера учится находить куб:
-
-![Скриншот 27-10-2022 213724](https://user-images.githubusercontent.com/113305087/200486735-e2508be7-a564-443f-9244-0f7873cc9766.jpg)
 
 ![Скриншот 27-10-2022 213735](https://user-images.githubusercontent.com/113305087/200486769-5f85aa97-0654-4407-9fad-6b72b9a7f8e3.jpg)
 
@@ -259,7 +267,7 @@ behaviors: #создаётся секция behaviors, которая будет
 ## Задание 3
 ### Доработайте сцену и обучите ML-Agent таким образом, чтобы шар перемещался между двумя кубами разного цвета. Кубы должны, как и в первом задании, случайно изменять координаты на плоскости.
 
-Для выполнения этого задания на сцене был создан второй объект-цель - куб голубого цвета, в коде он был обозначен как Target2. В коде были совершены следующие поправки:
+Для выполнения этого задания на сцене был создан второй объект-цель - куб голубого цвета, в коде он был обозначен как Target2, объект Target был переименован в Target1 для сохранения единого стиля названия переменных. Итоговый скрипт:
 
 ```
 using System.Collections; 
@@ -278,7 +286,7 @@ public class RollerAgent : Agent
         rBody = GetComponent<Rigidbody>(); 
     }
 
-    public Transform Target;
+    public Transform Target1;
     public Transform Target2;
     public bool FirstChecked = false;
 
@@ -291,15 +299,15 @@ public class RollerAgent : Agent
             this.transform.localPosition = new Vector3(0, 0.5f, 0); 
         }
 
-        Target.localPosition = new Vector3(Random.value * 8-4, 0.5f, Random.value * 8-4);
+        Target1.localPosition = new Vector3(Random.value * 8-4, 0.5f, Random.value * 8-4);
         Target2.localPosition = new Vector3(Random.value * 8-4, 0.5f, Random.value * 8-4);
-        Target.gameObject.SetActive(true);
+        Target1.gameObject.SetActive(true);
         Target2.gameObject.SetActive(true);
         FirstChecked = false;
     }
     public override void CollectObservations(VectorSensor sensor)
     {
-        sensor.AddObservation(Target.localPosition);
+        sensor.AddObservation(Target1.localPosition);
         sensor.AddObservation(Target2.localPosition);
         sensor.AddObservation(this.transform.localPosition); 
         sensor.AddObservation(rBody.velocity.x); 
@@ -313,14 +321,14 @@ public class RollerAgent : Agent
         controlSignal.z = actionBuffers.ContinuousActions[1]; 
         rBody.AddForce(controlSignal * forceMultiplier); 
 
-        float distanceToTarget = Vector3.Distance(this.transform.localPosition, Target.localPosition);
+        float distanceToTarget = Vector3.Distance(this.transform.localPosition, Target1.localPosition);
         float distanceToTarget2 = Vector3.Distance(this.transform.localPosition, Target2.localPosition);
         
 
         if(distanceToTarget < 1.42f & !FirstChecked)
         {
             FirstChecked = true;
-            Target.gameObject.SetActive(false);
+            Target1.gameObject.SetActive(false);
         }
         if(distanceToTarget2 < 1.42f & FirstChecked)
         {
@@ -346,8 +354,7 @@ public class RollerAgent : Agent
 
 ![Без названия](https://user-images.githubusercontent.com/113305087/200936712-31755289-051b-41c4-be3a-cb06e55c3892.gif)
 
-В результате мы получили шар, направляющийся сначала к первому, зелёному кубу, а потом ко второму, голубому. Самому шару, несмотря на довольно крупный объем тренируемых данных, точно есть куда стремиться! Ему гораздо тяжелее находить второй, голубой, куб.
-
+В результате мы получили шар, направляющийся сначала к первому, зелёному кубу, а потом ко второму, голубому. Самому шару, несмотря на довольно крупный объем тренируемых данных, точно есть куда стремиться! Ему всё ещё немного тяжело находить кубы.
 
 
 ## Выводы
@@ -358,6 +365,7 @@ public class RollerAgent : Agent
 
 
 Во время выполнения данной лабораторной работы, я научилась тому, как можно совершить простое машинное обучение шарика, преследующего свою цель. В будущем этот навык поможет анализировать и более сложные динамики, помогая реализовывать игровой баланс.
+
 
 
 | Plugin | README |
