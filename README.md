@@ -259,9 +259,105 @@ behaviors: #создаётся секция behaviors, которая будет
 ## Задание 3
 ### Доработайте сцену и обучите ML-Agent таким образом, чтобы шар перемещался между двумя кубами разного цвета. Кубы должны, как и в первом задании, случайно изменять координаты на плоскости.
 
+Для выполнения этого задания на сцене был создан второй объект-цель - куб голубого цвета, в коде он был обозначен как Target2. В коде были совершены следующие поправки:
+
+```
+using System.Collections; 
+using System.Collections.Generic; 
+using UnityEngine; 
+using Unity.MLAgents; 
+using Unity.MLAgents.Sensors; 
+using Unity.MLAgents.Actuators; 
+
+public class RollerAgent : Agent  
+{
+    Rigidbody rBody;
+    // Start is called before the first frame update
+    void Start() 
+    {
+        rBody = GetComponent<Rigidbody>(); 
+    }
+
+    public Transform Target;
+    public Transform Target2;
+    public bool FirstChecked = false;
+
+    public override void OnEpisodeBegin() 
+    {
+        if (this.transform.localPosition.y < 0) 
+        {
+            this.rBody.angularVelocity = Vector3.zero; 
+            this.rBody.velocity = Vector3.zero; 
+            this.transform.localPosition = new Vector3(0, 0.5f, 0); 
+        }
+
+        Target.localPosition = new Vector3(Random.value * 8-4, 0.5f, Random.value * 8-4);
+        Target2.localPosition = new Vector3(Random.value * 8-4, 0.5f, Random.value * 8-4);
+        Target.gameObject.SetActive(true);
+        Target2.gameObject.SetActive(true);
+        FirstChecked = false;
+    }
+    public override void CollectObservations(VectorSensor sensor)
+    {
+        sensor.AddObservation(Target.localPosition);
+        sensor.AddObservation(Target2.localPosition);
+        sensor.AddObservation(this.transform.localPosition); 
+        sensor.AddObservation(rBody.velocity.x); 
+        sensor.AddObservation(rBody.velocity.z);
+    }
+    public float forceMultiplier = 10;
+    public override void OnActionReceived(ActionBuffers actionBuffers) 
+    {
+        Vector3 controlSignal = Vector3.zero; 
+        controlSignal.x = actionBuffers.ContinuousActions[0]; 
+        controlSignal.z = actionBuffers.ContinuousActions[1]; 
+        rBody.AddForce(controlSignal * forceMultiplier); 
+
+        float distanceToTarget = Vector3.Distance(this.transform.localPosition, Target.localPosition);
+        float distanceToTarget2 = Vector3.Distance(this.transform.localPosition, Target2.localPosition);
+        
+
+        if(distanceToTarget < 1.42f & !FirstChecked)
+        {
+            FirstChecked = true;
+            Target.gameObject.SetActive(false);
+        }
+        if(distanceToTarget2 < 1.42f & FirstChecked)
+        {
+            Target2.gameObject.SetActive(false);
+            SetReward(1.0f);
+            EndEpisode();
+        }
+        else if (this.transform.localPosition.y < 0)
+        {
+            EndEpisode();
+        }
+
+        
+    }
+}
+```
+
+Для обучения модели было создано около 60 платформ:
+
+![Скриншот 09-11-2022 231810](https://user-images.githubusercontent.com/113305087/200928936-b776b233-17fa-4b7a-a633-14f1ce0dba68.jpg)
+
+Результат обучения:
+
+![Без названия](https://user-images.githubusercontent.com/113305087/200936712-31755289-051b-41c4-be3a-cb06e55c3892.gif)
+
+В результате мы получили шар, направляющийся сначала к первому, зелёному кубу, а потом ко второму, голубому. Самому шару, несмотря на довольно крупный объем тренируемых данных, точно есть куда стремиться! Ему гораздо тяжелее находить второй, голубой, куб.
+
+
+
 ## Выводы
 
-В выводах к работе дайте развернутый ответ, что такое игровой баланс и как системы машинного обучения могут быть использованы для того, чтобы его скорректировать.
+**Игровой баланс** - это полученное при создании игры свойство, которое отвечает за логичность и цельность различных механик. Присутствие игрового баланса равно получению игроком полноценного опыта при прохождении игры. Он может проявляться в балансе сложности уровней и боссов, во взаимоотношении между полученной валютой и товарами, которые можно на неё получить, в балансе сил различных персонажей и т.д. Важно понимать, что баланс не равен "одинаковости" - объекты в игре должны быть разными, а игра должна приносить удовольствие. 
+
+Системы машинного обучения - один из отличных способов скорректировать игровой баланс. При машинном обучении, происходит сбор и анализ огромного количества данных, используя которые, алгоритм учится - он перенимает некие особенности полученных данных или же делает выводы о своих действиях, исходя из уведомлений об успехе. Такие системы можжно, например, применить для баланса сложностей битв, происходящих не между игроками, а с "компьютером", - это поднимет интерес игрока. Помимо этого, сбор данных игрока, заинтересованного данной игрой, поможет найти дисбаланс некоторых механик, который можно будет разрешить уже не автоматически, а трудом разработчиков.
+
+
+Во время выполнения данной лабораторной работы, я научилась тому, как можно совершить простое машинное обучение шарика, преследующего свою цель. В будущем этот навык поможет анализировать и более сложные динамики, помогая реализовывать игровой баланс.
 
 
 | Plugin | README |
