@@ -331,10 +331,64 @@ TOTAL ERROR: 0
 ## Задание 3
 ### Построить визуальную модель работы перцептрона на сцене Unity
 
-Ход работы:
+**Ход работы:**
 
+В третьем задании я реализовала смену цветов раздичных шаров в соответствии с результатами логических операций.
 
+1. Для выполнения третьего задания я создаю новое окружение:
 
+![image](https://user-images.githubusercontent.com/113305087/204813658-636568f1-cec1-4e31-95dc-aabdc2b3590d.png)
+
+Это окружение состоит из 8 элементов:
+
+- Платформа, с которой стартуют шары
+- Ровная наклонная поверхность, играющая роль горки
+- Платформа, на которую приземляются шары
+- Вытянутый цилиндр, который будет играть роль триггера:
+
+![image](https://user-images.githubusercontent.com/113305087/204815756-94214e36-de48-4545-81af-9d566b70a248.png)
+
+- 4 шара двух цветов - два из них, дальние жёлтый и розовый, будут следовать по принципу, изученному перцептроном по "ИЛИ", а два других будут действовать по принципу "И". Все шары обладают компонентом RigidBody, в настройках которого указано, что они подвержены гравитации:
+
+![image](https://user-images.githubusercontent.com/113305087/204815141-3fa96695-11c4-4977-a620-3faeb4fcf03e.png)
+
+2. Пишем скрипт, который мы прикрепим к каждому из шаров. Этот скрипт будет отвечать за смену цвета:
+
+```
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Sphere : Perceptron
+{
+     private void OnTriggerEnter(Collider triggerBody)
+    {
+        int triggerBodyValue = triggerBody.gameObject.GetComponent<Renderer>().material.color == Color.magenta ? 0 : 1;
+        int movingBodyValue = this.gameObject.GetComponent<Renderer>().material.color == Color.magenta ? 0 : 1;
+
+        if (CalcOutput((double)movingBodyValue, (double)triggerBodyValue) == 0)
+            this.gameObject.GetComponent<Renderer>().material.color = Color.yellow;
+        else
+            this.gameObject.GetComponent<Renderer>().material.color = Color.magenta;
+    }
+}
+```
+
+В скрипте мы указываем цифровые значения для двух цветов, которыми мы обозначаем шары и триггер: 
+
+- Розовый цвет = 0
+- Желтый цвет = 1
+
+В соответствии с этими значениями и будут производиться логические операции, влияющие на изменение цвета шаров.
+
+3. Привязываем данный шрифт к каждому из шаров, указывая необходимые стартовые значения в компоненте:
+
+![image](https://user-images.githubusercontent.com/113305087/204816625-2b346468-e42e-46e1-9df7-a9d6cf3bef9f.png)
+![image](https://user-images.githubusercontent.com/113305087/204816685-9284dcc2-8884-48b2-8dfd-64c7362bbe85.png)
+
+4. Запускаем программу и смотрим на изменение цвета:
+
+5. Запускаем программу повторно, заменив цвет цилиндра на розовый:
 
 ## Выводы
 
