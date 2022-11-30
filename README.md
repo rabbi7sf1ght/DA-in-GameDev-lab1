@@ -363,8 +363,8 @@ public class Sphere : Perceptron
 {
      private void OnTriggerEnter(Collider triggerBody)
     {
-        int triggerBodyValue = triggerBody.gameObject.GetComponent<Renderer>().material.color == Color.magenta ? 0 : 1;
-        int movingBodyValue = this.gameObject.GetComponent<Renderer>().material.color == Color.magenta ? 0 : 1;
+        int triggerBodyValue = triggerBody.gameObject.GetComponent<Renderer>().material.color == Color.magenta ? 1 : 0;
+        int movingBodyValue = this.gameObject.GetComponent<Renderer>().material.color == Color.magenta ? 1 : 0;
 
         if (CalcOutput((double)movingBodyValue, (double)triggerBodyValue) == 0)
             this.gameObject.GetComponent<Renderer>().material.color = Color.yellow;
@@ -376,8 +376,8 @@ public class Sphere : Perceptron
 
 В скрипте мы указываем цифровые значения для двух цветов, которыми мы обозначаем шары и триггер: 
 
-- Розовый цвет = 0
-- Желтый цвет = 1
+- Желтый цвет = 0
+- Розовый цвет = 1
 
 В соответствии с этими значениями и будут производиться логические операции, влияющие на изменение цвета шаров.
 
@@ -388,12 +388,26 @@ public class Sphere : Perceptron
 
 4. Запускаем программу и смотрим на изменение цвета:
 
+![1](https://user-images.githubusercontent.com/113305087/204824971-944fbc4c-bb6f-4180-aaf1-c28b25f34f25.jpg)
+
+![2](https://user-images.githubusercontent.com/113305087/204825012-e1d2b096-e971-4240-bd06-5a058e9c80a9.jpg)
+
+![1](https://user-images.githubusercontent.com/113305087/204833782-1074ce21-6d10-49c4-91ad-972fe6ffee66.gif)
+
 5. Запускаем программу повторно, заменив цвет цилиндра на розовый:
+
+![3](https://user-images.githubusercontent.com/113305087/204833895-5b7f6525-47c5-490d-94f9-f914490cd073.jpg)
+
+![4](https://user-images.githubusercontent.com/113305087/204833962-af729344-8a04-4a27-b60b-eac82958aa51.jpg)
+
+![2](https://user-images.githubusercontent.com/113305087/204834143-952c305b-a351-4664-b404-41ba6ebe2ac4.gif)
+
+
+В результате все шары ожидаемо сменили свои цвета, а значит как обучение перцептрона, так и визуализация его работы прошли успешно
 
 ## Выводы
 
-Во время выполнения лабораторной работы, я смогла поработать с основными операторами языка Python, рассмотрев и проанализировав написанный на нём алгоритм линейной регрессии и изучив его возможности. Помимо этого, я смогла получше узнать возможности Google Colab и понять, насколько полезен он может быть для работы с алгоритмами языка Python. 
-
+Во время выполнения лабораторной работы, я смогла научиться простейшему обучению перцептрона на примере логических операций OR, AND, NAND И XOR. Также я разобралась в том, как именно происходит это обучение и от чего оно зависит. Полученные же мной знания в итоге помогли мне визуализировать результат обучения данного перцептрона.
 
 | Plugin | README |
 | ------ | ------ |
