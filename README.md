@@ -1,5 +1,5 @@
 # АНАЛИЗ ДАННЫХ И ИСКУССТВЕННЫЙ ИНТЕЛЛЕКТ [in GameDev]
-Отчет по лабораторной работе #1 выполнил(а):
+Отчет по лабораторной работе #5 выполнил(а):
 - Нагнибеда Алиса Александровна
 - РИ-210941
 Отметка о выполнении заданий (заполняется студентом):
@@ -7,8 +7,7 @@
 | Задание | Выполнение | Баллы |
 | ------ | ------ | ------ |
 | Задание 1 | * | 60 |
-| Задание 2 | * | 20 |
-| Задание 3 | * | 20 |
+| Задание 2 | * | 40 |
 
 знак "*" - задание выполнено; знак "#" - задание не выполнено;
 
@@ -35,18 +34,45 @@
 - ✨Magic ✨
 
 ## Цель работы
-Ознакомиться с основными операторами зыка Python на примере реализации линейной регрессии.
+Ознакомиться с интеграцией экономической системы в проект Unity и обучением ML-Agent.
 
 ## Задание 1
 ### Написать программы Hello World на Python и Unity
 
-1. Скриншот программы, написанной на Python в PyCharm:
+yaml:
 
-![Скриншот 26-09-2022 013157](https://user-images.githubusercontent.com/113305087/192334358-0e4483c9-0784-41bd-a535-7bb0ade39b7e.jpg)
-
-2. Скриншот программы, написанной на Unity:
-
-![image](https://user-images.githubusercontent.com/113305087/192335708-f5f3ff88-3f4a-4c96-8221-150dbd58a6b5.png)
+```
+behaviors:
+  Economic:
+    trainer_type: ppo
+    hyperparameters:
+      batch_size: 1024
+      buffer_size: 10240
+      learning_rate: 3.0e-4
+      learning_rate_schedule: linear
+      beta: 1.0e-2
+      epsilon: 0.2
+      lambd: 0.95
+      num_epoch: 3      
+    network_settings:
+      normalize: false
+      hidden_units: 128
+      num_layers: 2
+    reward_signals:
+      extrinsic:
+        gamma: 0.99
+        strength: 1.0
+    checkpoint_interval: 500000
+    max_steps: 750000
+    time_horizon: 64
+    summary_freq: 5000
+    self_play:
+      save_steps: 20000
+      team_change: 100000
+      swap_steps: 10000
+      play_against_latest_model_ratio: 0.5
+      window: 10
+```
 
 ## Задание 2
 ### Пошагово выполнить каждый пункт раздела "ход работы" с описанием и примерами реализации задач.
