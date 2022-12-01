@@ -37,9 +37,167 @@
 Ознакомиться с интеграцией экономической системы в проект Unity и обучением ML-Agent.
 
 ## Задание 1
-### Написать программы Hello World на Python и Unity
+### Изучить работу данного преподавателем проекта для обучения программы простым, направленным на улучшение экономической системы действиям. Изменить параметры файла yaml-агента и определить какие параметры и как влияют на обучение модели.
 
-yaml:
+**Ход раобты:**
+
+1. Для начала работы над заданием я скачала и подробнее рассмотрела работу представленного преподавателем проекта:
+
+![Скриншот 01-12-2022 110420](https://user-images.githubusercontent.com/113305087/205043858-387b0b68-f8dd-4edc-9767-f9f3b5512427.jpg)
+
+Основные действия в этом проекте ложатся на шар - он пермещается между шахтой, в которой собирает золото, и городом, в котором он это золото продаёт по расчитываемой им цене. Код, который отвечает за эти действия:
+
+```
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Unity.MLAgents;
+using Unity.MLAgents.Sensors;
+using Unity.MLAgents.Actuators;
+
+public class Move : Agent
+{
+    [SerializeField] private GameObject goldMine;
+    [SerializeField] private GameObject village;
+    private float speedMove;
+    private float timeMining;
+    private float month;
+    private bool checkMiningStart = false;
+    private bool checkMiningFinish = false;
+    private bool checkStartMonth = false;
+    private bool setSensor = true;
+    private float amountGold;
+    private float pickaxeСost;
+    private float profitPercentage;
+    private float[] pricesMonth = new float[2];
+    private float priceMonth;
+    private float tempInf;
+
+    // Start is called before the first frame update
+    public override void OnEpisodeBegin()
+    {
+        // If the Agent fell, zero its momentum
+        if (this.transform.localPosition != village.transform.localPosition)
+        {
+            this.transform.localPosition = village.transform.localPosition;
+        }
+        checkMiningStart = false;
+        checkMiningFinish = false;
+        checkStartMonth = false;
+        setSensor = true;
+        priceMonth = 0.0f;
+        pricesMonth[0] = 0.0f;
+        pricesMonth[1] = 0.0f;
+        tempInf = 0.0f;
+        month = 1;
+    }
+    public override void CollectObservations(VectorSensor sensor)
+    {
+        sensor.AddObservation(speedMove);
+        sensor.AddObservation(timeMining);
+        sensor.AddObservation(amountGold);
+        sensor.AddObservation(pickaxeСost);
+        sensor.AddObservation(profitPercentage);
+    }
+
+    public override void OnActionReceived(ActionBuffers actionBuffers)
+    {
+        if (month < 3 || setSensor == true)
+        {
+            speedMove = Mathf.Clamp(actionBuffers.ContinuousActions[0], 1f, 10f);
+            Debug.Log("SpeedMove: " + speedMove);
+            timeMining = Mathf.Clamp(actionBuffers.ContinuousActions[1], 1f, 10f);
+            Debug.Log("timeMining: " + timeMining);
+            setSensor = false;
+            if (checkStartMonth == false)
+            {
+                Debug.Log("Start Coroutine StartMonth");
+                StartCoroutine(StartMonth());
+            }
+
+            if (transform.position != goldMine.transform.position & checkMiningFinish == false)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, goldMine.transform.position, Time.deltaTime * speedMove);
+            }
+
+            if (transform.position == goldMine.transform.position & checkMiningStart == false)
+            {
+                Debug.Log("Start Coroutine StartGoldMine");
+                StartCoroutine(StartGoldMine());
+            }
+
+            if (transform.position != village.transform.position & checkMiningFinish == true)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, village.transform.position, Time.deltaTime * speedMove);
+            }
+
+            if (transform.position == village.transform.position & checkMiningStart == true)
+            {
+                checkMiningFinish = false;
+                checkMiningStart = false;
+                setSensor = true;
+                amountGold = Mathf.Clamp(actionBuffers.ContinuousActions[2], 1f, 10f);
+                Debug.Log("amountGold: " + amountGold);
+                pickaxeСost = Mathf.Clamp(actionBuffers.ContinuousActions[3], 100f, 1000f);
+                Debug.Log("pickaxeСost: " + pickaxeСost);
+                profitPercentage = Mathf.Clamp(actionBuffers.ContinuousActions[4], 0.1f, 0.5f);
+                Debug.Log("profitPercentage: " + profitPercentage);
+
+                if (month != 2)
+                {
+                    priceMonth = pricesMonth[0] + ((pickaxeСost + pickaxeСost * profitPercentage) / amountGold);
+                    pricesMonth[0] = priceMonth;
+                    Debug.Log("priceMonth: " + priceMonth);
+                }
+                if (month == 2)
+                {
+                    priceMonth = pricesMonth[1] + ((pickaxeСost + pickaxeСost * profitPercentage) / amountGold);
+                    pricesMonth[1] = priceMonth;
+                    Debug.Log("priceMonth: " + priceMonth);
+                }
+
+            }
+        }
+        else
+        {
+            tempInf = ((pricesMonth[1] - pricesMonth[0]) / pricesMonth[0]) * 100;
+            if (tempInf <= 6f)
+            {
+                SetReward(1.0f);
+                Debug.Log("True");
+                Debug.Log("tempInf: " + tempInf);
+                EndEpisode();
+            }
+            else
+            {
+                SetReward(-1.0f);
+                Debug.Log("False");
+                Debug.Log("tempInf: " + tempInf);
+                EndEpisode();
+            }
+        }
+    }
+
+    IEnumerator StartGoldMine()
+    {
+        checkMiningStart = true;
+        yield return new WaitForSeconds(timeMining);
+        Debug.Log("Mining Finish");
+        checkMiningFinish = true;
+    }
+
+    IEnumerator StartMonth()
+    {
+        checkStartMonth = true;
+        yield return new WaitForSeconds(60);
+        checkStartMonth = false;
+        month++;
+
+    }
+}
+```
+
+Главная идея заключается в том, чтобы цена обязательно была выгодной. В это и заключается цель обучения - заставить систему расчитывать наиболее удачную цену. Обучение происходит при помощи Economic.yaml файла:
 
 ```
 behaviors:
@@ -74,84 +232,184 @@ behaviors:
       window: 10
 ```
 
+2. Проведу обучение модели, запустив созданную ранее виртуальную среду, на которую уже загружены все необходимые пакеты - mlagents 0.28.0 и torch 1.7.1. Обучение начинаю проводить на ранее созданных двенадцати префабах:
+
+![Скриншот 01-12-2022 132252](https://user-images.githubusercontent.com/113305087/205044850-cac59341-9ff6-45cc-b739-a1f82607666b.jpg)
+
+Однако результат обучения был настолько медленным, что я посчитала важным увеличить количество полей до тридцати шести: 
+
+![Скриншот 01-12-2022 132855](https://user-images.githubusercontent.com/113305087/205044962-faac9275-aeed-4f63-98a2-5d7855d72769.jpg)
+
+Результаты в консоли были следующие:
+
+![Скриншот 01-12-2022 135151](https://user-images.githubusercontent.com/113305087/205045078-f954e35f-345f-4adb-bd07-730a6f8656be.jpg)
+
+3. Для более явной оценки результатов в виртуальное окружение была установлена TensorBoard:
+
+![image](https://user-images.githubusercontent.com/113305087/205045359-1727b554-2b1d-4dfb-9690-dab0ac62a1cf.png)
+
+В неё при помощи команды
+
+```
+tensorboard --logdir=results
+```
+были представлены результаты прошедшего обучения экономической системы:
+
+![Скриншот 01-12-2022 141832](https://user-images.githubusercontent.com/113305087/205045837-05a02dea-a58e-496f-baa5-6fd9ebf8ce24.jpg)
+
+![Скриншот 01-12-2022 141841](https://user-images.githubusercontent.com/113305087/205045888-58b235f0-7064-46ec-9278-7e00155cc8b8.jpg)
+
+![Скриншот 01-12-2022 141906](https://user-images.githubusercontent.com/113305087/205046541-4cc31f05-4935-469b-900f-4e54deb1471c.jpg)
+
+![image](https://user-images.githubusercontent.com/113305087/205048234-19887dd2-b715-4c28-bc93-bcf2e517fa5c.png)
+
+Заметно, например, что значение награды довольно сильно скачет.
+
+Попробуем провести над файлом Economic.yaml некоторые изменения и повторить операции обучения нашей экономической систем. Также проанализируем их, сравнив друг с другом.
+
+
+**1 изменение:**
+
+Изменение касается данной строчки кода:
+
+```
+strength: 1.0
+->
+strength: 2.3
+```
+
+Сравнение результатов начальной итерации (голубой цвет) и той, что была совершена после изменений (красный цвет):
+
+![image](https://user-images.githubusercontent.com/113305087/205050206-88d25521-882f-4d4d-a3bc-c50d3bf7075a.png)
+
+Видно, что за счет отрицательного скачка в значении награды, график наград получается менее стабильным. Однако, уже в середине значение награды увеличивается, тренировка быстро становится успешнее той, что была проведена ранее.
+
+![image](https://user-images.githubusercontent.com/113305087/205052017-3ea2ed17-9172-4fc6-95e4-2ef37060947e.png)
+
+Потери держатся на примерно равном уровне.
+
+![image](https://user-images.githubusercontent.com/113305087/205053247-93fde180-00a7-47b2-8061-56396c356744.png)
+
+Рейтинг ELO ниже.
+
+В результате, обучение можно назвать как успешным, так и не совсем, но значение strength точно влияет на некоторые позиции. Изменения первого пункта были сохранены на протяжении дальнейших итераций.
+
+**2 изменение:** 
+
+Изменение касается данных строчек кода:
+
+```
+batch_size: 1024
+buffer_size: 10240
+>>>
+batch_size: 2024
+buffer_size: 20240
+```
+
+Так как изменения, совершенные в первую измененную итерацию, были сохранены, проведём сравнение именно с ней (первая операция - красный цвет, вторая - голубой):
+
+![image](https://user-images.githubusercontent.com/113305087/205054341-9a1cc435-de43-4b9a-aef4-10b3145c03cd.png)
+
+Значения наград стали хуже, значение продолжительности эпизода осталось таким же.
+
+![image](https://user-images.githubusercontent.com/113305087/205054573-6746966e-97df-4a02-96ae-bf1be66d76a2.png)
+
+Значения потерь стали меньше - успех.
+
+![image](https://user-images.githubusercontent.com/113305087/205054688-3e1d7faa-eea4-43b7-b357-8af695dc9e47.png)
+
+Изменения ELO неоднозначные.
+
+Можно сделать вывод, что изменения повлияли на обучения скорее положительно, чем отрицательно. Изменения этих параметров в большую сторону благоприятно влияют на значения потерь.
+
+
+**3 изменение:
+
+Изменения прошлого пункта были сброшены, теперь значения таковы:
+
+```
+batch_size: 1024
+buffer_size: 10240
+>>>
+batch_size: 500
+buffer_size: 5240
+```
+
+Сравнение приведём с прошлой, второй, итерацией:
+
+![image](https://user-images.githubusercontent.com/113305087/205055917-fd64619e-44e6-49d8-a2e6-33c5cb362e32.png)
+
+Значение наград растёт в положительную сторону!
+
+![image](https://user-images.githubusercontent.com/113305087/205056622-2903a034-7582-4b34-947c-4b293e85d7dc.png)
+
+Однако потери принятия решений велики, несмотря на низкие значения в потрях значений.
+
+![image](https://user-images.githubusercontent.com/113305087/205056885-a1101224-1fc3-4697-8e6b-d91c289ebbea.png)
+
+ELO все на том же уровне.
+
+Обучение можно было бы назвать успешным, если бы не значения policy loss.
+
+**4 изменение:**
+
+Для этого этапа изменений вернёмся к состоянию файла на момент первого пункта изменений. Теперь они коснутся этой строчки:
+
+```
+learning_rate: 3.0e-4
+>>>
+learning_rate: 4.0e-4
+```
+
+Сравнение будем проводить с графиками первых изменений (они - красный цвет, 4 изменение - тёмно зелёный):
+
+![image](https://user-images.githubusercontent.com/113305087/205057557-7e4375bd-586e-4f5b-b628-9fbb24510172.png)
+
+Изменений почти нет.
+
+![image](https://user-images.githubusercontent.com/113305087/205058063-3ec24e9b-14b7-42de-a7c7-e202caf93804.png)
+
+Потери уменьшаются - изменения в лучшую сторону
+
+![image](https://user-images.githubusercontent.com/113305087/205058767-81f35e3a-c205-4164-a336-22a7dc224640.png)
+
+Значения ELO уменьшаются, но всё равно могут считаться более успешными.
+
+Как итог это изменение оказало положительный эффект на обучение системы.
+
+
+**5 изменение:**
+
+```
+gamma: 0.99
+strength: 2.3
+>>>
+gamma: 0.90
+strength: 0.7
+```
+
+Помимо уменьшения значения gamma были решено уменьшить значение strength. Так как изменения ближе к нулевой, изначальной итерации, сравнение будет проводиться именно с ней (нулевая итерация - синий цвет, пятая - оранжевый):
+
+![image](https://user-images.githubusercontent.com/113305087/205060135-7b0d3030-b9ba-4255-99c7-10a7ddba65de.png)
+
+Значения наград стали гораздо стабильнее и лучше.
+
+![image](https://user-images.githubusercontent.com/113305087/205060224-4a465ded-d37a-4c9e-a7cb-36d2163b5f9b.png)
+
+Потери стали в разы меньше.
+
+![image](https://user-images.githubusercontent.com/113305087/205060352-8f9149dc-e8d5-4e57-8c1a-86cb027f579c.png)
+
+ELO не меняется, но держится на хорошем уровне.
+
+Пятая операция оказалась успешной
+
+**Вывод.** Стоит отметить, что пятые изменения в файле yaml оказались самыми успешными, а значит, в какой-то степени значительнее всего повлияли на итоговые результаты именно значения полей strength и gamma. Помимо этого довольно успешно на работу системы появляли изменения learning rate в большую сторону. Остальные же параметры не оказали значимого влияния на рузльтаты.
+
 ## Задание 2
-### Пошагово выполнить каждый пункт раздела "ход работы" с описанием и примерами реализации задач.
+### Описать результаты, выведенные в TensorBoard.
 
-Ход работы:
-- Произвести подготовку данных для работы с алгоритмом линейной регрессии. 10 видов данных были установлены случайным образом, и данные находились в линейной зависимости. Данные преобразуются в формат массива, чтобы их можно было вычислить напрямую при использовании умножения и сложения.
-
-![image](https://user-images.githubusercontent.com/113305087/192359777-fed21ba0-1e14-4dbc-8cc8-8afa55d91118.png)
-
-- Определите связанные функции. Функция модели: определяет модель линейной регрессии wx+b. Функция потерь: функция потерь среднеквадратичной ошибки. Функция оптимизации: метод градиентного спуска для нахождения частных производных w и b.
-
-![image](https://user-images.githubusercontent.com/113305087/192363322-6bb02598-c2a3-4fc2-a40d-28df85944c84.png)
-
-- Начать итерацию
-
-1. Инициализация и модель итеративной оптимизации:
-
-![image](https://user-images.githubusercontent.com/113305087/192367077-f166bd86-1d86-401d-a2f1-c4828172558b.png)
-![image](https://user-images.githubusercontent.com/113305087/192458592-1490a9ee-1c3f-4cc7-a841-955ff282e057.png)
-
-2. На второй итерации отображаются значения параметров, значения потерь и эффекты визуализации после итерации:
-
-![image](https://user-images.githubusercontent.com/113305087/192458806-a67719d6-e499-4827-9c2b-c55437b8c2b3.png)
-
-3. Третья итерация показывает значения параметров, значения потерь и визуализацию после итерации:
-
-![image](https://user-images.githubusercontent.com/113305087/192459149-ea1ff3b8-de81-4eab-94ee-9e40afd0587d.png)
-
-4. На четвертой итерации отображаются значения параметров, значения потерь и эффекты визуализации:
-
-![image](https://user-images.githubusercontent.com/113305087/192459375-87852522-9a80-4293-9422-373716b6bc63.png)
-
-5. Пятая итерация показывает значения параметра, значения потерь и эффект визуализации после итерации:
-
-![image](https://user-images.githubusercontent.com/113305087/192459515-2a35af57-f3fe-42c2-96e4-dbc18b0d2f04.png)
-
-6. 10000-я итерация, показывающая значения параметров, потери и визуализацию после итерации:
-
-![image](https://user-images.githubusercontent.com/113305087/192459650-00270eed-64ff-43be-8ba0-1c8e59e5d6c8.png)
-
-
-## Задание 3
-### Изучить код задач и ответить на вопросы:
-1. Должна ли величина loss стремиться к нулю при изменении исходных данных? Ответьте на вопрос, приведите пример выполнения кода, который подтверждает ваш ответ.
-
-Величина loss отображает то, какие потери были получены при вычислении линейной регрессии. Она должна стремиться к нулю при изменении количества итераций в большую сторону. Это можно подтвердить результатами итераций, представленными во втором задании (2-6 пункты). Чем больше итераций совершенно, тем точнее результат и тем меньше потери.
-Привожу новые примеры того, как на loss влияет количество итераций (7, 100 и 4444 итераций):
-![image](https://user-images.githubusercontent.com/113305087/192465992-fb97c351-b75b-4f68-aa4d-2fe0a26ae5cc.png)
-
-Можно также предположить, что стремление loss к нулю зависит и от того факта, насколько явна зависимость между x и y. При изменении исходных данных на явную зависимость, я увидела то, что стремление loss к нулю становится более явным:
-
-![image](https://user-images.githubusercontent.com/113305087/192468422-b4ed26ab-ae91-4619-a1ca-d91388b28825.png)
-
-![image](https://user-images.githubusercontent.com/113305087/192468522-3541458e-21a1-4311-92bb-1a0579b8d1f6.png)
-
-2. Какова роль параметра Lr? Ответьте на вопрос, приведите пример выполнения кода, который подтверждает ваш ответ. В качестве эксперимента можете изменить значение параметра.
-
-Lr - это параметр, отвечающий за изменения значений a и b, совершающиеся, каждый вызов функции optimize, а соответственно именно от него зависит изменение погрешности результатов: чем меньше значение параметра Lr, тем больше итераций понадобится для получения результата с наименьшей погрешностью. Для доказательства привожу скриншоты итераций с различным значением параметра Lr
-
-Lr = 0.00003:
-
-![image](https://user-images.githubusercontent.com/113305087/192464365-8782075a-3af8-4bfe-a7f7-6934e779fa9e.png)
-
-Lr = 0.00001:
-
-![image](https://user-images.githubusercontent.com/113305087/192464480-4624e2d4-11a1-4ff8-b1dc-1c82f4f9da66.png)
-
-Lr = 0.0000001:
-
-![image](https://user-images.githubusercontent.com/113305087/192464611-05b605d4-f1a2-4e3c-b170-ec947f26af2d.png)
-
-Lr = 0.000000001:
-
-![image](https://user-images.githubusercontent.com/113305087/192464726-20750a9a-f3a6-4af6-a37d-770784340b83.png)
-
-На приведённых примерах выполнения кода заметна описанная выше зависимость. Однако важно отметить, что если значение Lr, отвечающее за изменения a и b в каждую итерацию, будет слишком большим, то это приведёт к возникновению ещё больших неточностей, чем слишком маленькое значение этого параметра. Привожу пример выполнения кода, за итерации которого a и b меняются так быстро, что это приводит к большим потерям и ошибкам:
-
-![image](https://user-images.githubusercontent.com/113305087/192465590-dc7a0a9b-1d43-4039-9a5d-8d1e19ee7706.png)
-
+**Ход работы:**
 
 ## Выводы
 
